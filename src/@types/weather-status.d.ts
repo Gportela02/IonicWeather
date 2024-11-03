@@ -1,0 +1,1 @@
+type WEATHER_STATUS = "Chovendo" | "Ensolarado" | "Trovejando" | "Nublado"  

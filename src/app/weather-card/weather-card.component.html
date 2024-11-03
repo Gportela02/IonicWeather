@@ -1,0 +1,31 @@
+<ion-card>
+
+  <aside>
+    <ion-icon name="sunny" color="primary"></ion-icon>
+  </aside>
+
+  <div class="wrapper">
+    <header>
+      <ion-card-header>
+        <ion-card-title>{{ cityName }}</ion-card-title>
+        <ion-card-subtitle>{{ weatherStatus }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-icon [name]="isFavorited ? 'star' : 'star-outline'" (click)="favoriteCard()"
+        [ngClass]="isFavorited ? 'star-full' : ''" />
+    </header>
+
+    <ion-card-content>
+      <div class="info-badge">
+        <ion-icon name="thermometer-outline"></ion-icon>
+        <p>{{ temperature }}°C</p>
+      </div>
+      <p>・</p>
+      <div class="info-badge">
+        <ion-icon name="water-outline"></ion-icon>
+        <p>{{ umidity }}%</p>
+      </div>
+    </ion-card-content>
+  </div>
+
+</ion-card>
