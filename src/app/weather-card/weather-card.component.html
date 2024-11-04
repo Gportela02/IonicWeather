@@ -2,7 +2,7 @@
 
   <ng-template #unavailable>Indisp.</ng-template>
 
-  <aside [ngSwitch]="weatherCode">
+  <aside [ngSwitch]="getWeatherIcon(weatherCode)">
     <ion-icon name="sunny-outline" color="primary" *ngSwitchCase="0"></ion-icon>
     <ion-icon name="cloudy-outline" color="primary" *ngSwitchCase="1"></ion-icon>
     <ion-icon name="rainy-outline" color="primary" *ngSwitchCase="2"></ion-icon>
@@ -13,14 +13,13 @@
 
   <div class="wrapper">
     <header>
-      <ion-card-header [ngSwitch]="weatherCode">
-        <ion-card-title>{{ cityName }}</ion-card-title>
-        <ion-card-subtitle *ngSwitchCase="0">Ensolarado</ion-card-subtitle>
-        <ion-card-subtitle *ngSwitchCase="1">Nublado</ion-card-subtitle>
-        <ion-card-subtitle *ngSwitchCase="2">Chovendo</ion-card-subtitle>
-        <ion-card-subtitle *ngSwitchCase="3">Trovejando</ion-card-subtitle>
-        <ion-card-subtitle *ngSwitchCase="4">Nevando</ion-card-subtitle>
-        <ion-card-subtitle *ngSwitchDefault>Indisponível</ion-card-subtitle>
+      <ion-card-header>
+        <ion-card-title *ngIf="weatherStatus !== null; else unavailable">
+          {{ cityName }}
+        </ion-card-title>
+        <ion-card-subtitle *ngIf="weatherStatus !== null; else unavailable">
+          {{ weatherStatus }}
+        </ion-card-subtitle>
       </ion-card-header>
 
       <ion-icon [name]="isFavorited ? 'star' : 'star-outline'" (click)="favoriteCard()"

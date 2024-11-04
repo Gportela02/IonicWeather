@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OpenMeteoService } from '../services/open-meteo.service';
+import { OpenWeatherMapService } from '../services/open-weather-map.service';
 
 @Component({
   selector: 'app-home',
@@ -11,14 +11,18 @@ export class HomePage implements OnInit {
   temperature: number | null = null;
   humidity: number | null = null;
   weatherCode: number | null = null;
+  weatherStatus: string | null = null;
+  cityName: string | null = null;
 
-  constructor(private openMeteoService: OpenMeteoService) { }
+  constructor(private openWeatherMapService: OpenWeatherMapService) { }
 
   ngOnInit() {
-    this.openMeteoService.fetchCities().subscribe(data => {
-      this.temperature = this.openMeteoService.getCurrentTemperature(data);
-      this.humidity = this.openMeteoService.getCurrentHumidity(data);
-      this.weatherCode = this.openMeteoService.getCurrentWeatherCode(data);
+    this.openWeatherMapService.getCity().subscribe(data => {
+      this.temperature = data.main.temp;
+      this.humidity = data.main.humidity;
+      this.weatherCode = data.weather[0]?.id || null;
+      this.weatherStatus = data.weather[0]?.description || null;
+      this.cityName = data.name;
     })
   }
 }
