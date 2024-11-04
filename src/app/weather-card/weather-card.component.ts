@@ -8,9 +8,9 @@ import { Component, Input } from '@angular/core';
 export class WeatherCardComponent {
   constructor() { }
   @Input() cityName!: string;
-  @Input() temperature!: number;
-  @Input() weatherStatus!: WEATHER_STATUS;
-  @Input() umidity!: number;
+  @Input() temperature!: number | null;
+  @Input() weatherCode!: number | null;
+  @Input() humidity!: number | null;
   @Input() isFavorited: boolean = false;
 
   favoriteCard() {
