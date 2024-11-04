@@ -7,8 +7,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div id="container">
-    <app-weather-card [cityName]="cityName" [temperature]="temperature" [weatherCode]="weatherCode"
-      [humidity]="humidity" [weatherStatus]="weatherStatus" />
+  <div id="container" *ngFor="let weather of weathers">
+    <app-weather-card [weather]="weather" />
   </div>
 </ion-content>

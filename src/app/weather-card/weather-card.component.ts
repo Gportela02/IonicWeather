@@ -1,21 +1,39 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { LocalStorageService } from '../services/local-storage.service';
+import { OpenWeatherMapResponse } from '../services/open-weather-map.service';
+
+type WeatherCache = Array<{
+  cityName: string | null
+  temperature: number | null
+  weatherCode: number | null
+  humidity: number | null
+  weatherStatus: string | null
+}>
 
 @Component({
   selector: 'app-weather-card',
   templateUrl: './weather-card.component.html',
   styleUrls: ['./weather-card.component.scss'],
 })
-export class WeatherCardComponent {
-  constructor() { }
-  @Input() cityName!: string | null;
-  @Input() temperature!: number | null;
-  @Input() weatherCode!: number | null;
-  @Input() humidity!: number | null;
-  @Input() weatherStatus!: string | null;
-  @Input() isFavorited: boolean = false;
+export class WeatherCardComponent implements OnInit {
+  constructor(private localStorage: LocalStorageService) { }
+  cityName!: string | null;
+  temperature!: number | null;
+  weatherCode!: number | null;
+  humidity!: number | null;
+  weatherStatus!: string | null;
+  isFavorited!: boolean;
+
+  @Input() weather!: OpenWeatherMapResponse;
 
   favoriteCard() {
     this.isFavorited = !this.isFavorited;
+    if (this.isFavorited) {
+      this.localStorage.saveWeather(this.weather);
+    }
+    if (!this.isFavorited) {
+      this.localStorage.removeWeather(this.weather);
+    }
   }
 
   getWeatherIcon(weatherCode: number | null): number | null {
@@ -27,5 +45,19 @@ export class WeatherCardComponent {
     if (weatherCode >= 600 && weatherCode < 700) return 4; // snow
 
     return null;
+  }
+
+  ngOnInit() {
+    this.cityName = this.weather.name;
+    this.temperature = this.weather.main.temp;
+    this.weatherCode = this.weather.weather[0]?.id || null;
+    this.humidity = this.weather.main.humidity;
+    this.weatherStatus = this.capitalizeFirstLetter(this.weather.weather[0]?.description);
+    this.isFavorited = !!this.weather.favorited;
+  }
+
+  private capitalizeFirstLetter(str: string | null) {
+    if (!str) return null
+    return str[0].toUpperCase() + str.slice(1)
   }
 }

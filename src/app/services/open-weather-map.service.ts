@@ -66,4 +66,5 @@ export interface OpenWeatherMapResponse {
   id: number;
   name: string;
   cod: number;
+  favorited: boolean;
 }

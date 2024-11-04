@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { OpenWeatherMapService } from '../services/open-weather-map.service';
+import { OpenWeatherMapResponse, OpenWeatherMapService } from '../services/open-weather-map.service';
+import { LocalStorageService } from '../services/local-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -8,21 +9,25 @@ import { OpenWeatherMapService } from '../services/open-weather-map.service';
 })
 export class HomePage implements OnInit {
 
-  temperature: number | null = null;
-  humidity: number | null = null;
-  weatherCode: number | null = null;
-  weatherStatus: string | null = null;
-  cityName: string | null = null;
+  weathers: OpenWeatherMapResponse[] = [];
 
-  constructor(private openWeatherMapService: OpenWeatherMapService) { }
+  constructor(
+    private openWeatherMapService: OpenWeatherMapService,
+    private localStorage: LocalStorageService
+  ) { }
 
   ngOnInit() {
+    this.weathers = this.localStorage.getAllWeathers();
+
     this.openWeatherMapService.getCity().subscribe(data => {
-      this.temperature = data.main.temp;
-      this.humidity = data.main.humidity;
-      this.weatherCode = data.weather[0]?.id || null;
-      this.weatherStatus = data.weather[0]?.description || null;
-      this.cityName = data.name;
+      const weatherAlreadyExistsIndex = this.weathers.findIndex(w => w.name === data.name);
+      if (weatherAlreadyExistsIndex !== -1) {
+        data.favorited = true; // already in cache, saved by user
+        this.weathers[weatherAlreadyExistsIndex] = data;
+      }
+      if (weatherAlreadyExistsIndex === -1) {
+        this.weathers.push(data)
+      }
     })
   }
 }
