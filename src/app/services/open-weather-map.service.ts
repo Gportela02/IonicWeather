@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { forkJoin, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class OpenWeatherMapService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getCity(latitude: number = -8.0539, longitude = -34.8811) {
+  getCity(latitude: number, longitude: number): Observable<OpenWeatherMapResponse> {
     const params = new URLSearchParams({
       lat: latitude.toString(),
       lon: longitude.toString(),
@@ -21,6 +22,31 @@ export class OpenWeatherMapService {
     })
 
     return this.httpClient.get<OpenWeatherMapResponse>(this.url + "/weather?" + params.toString())
+  }
+
+  getSurroundingCities(latitude: number, longitude: number, delta: number = 0.5): Observable<OpenWeatherMapResponse[]> {
+    const coordinates: { lat: number, lon: number }[] = [{
+      lat: latitude,
+      lon: longitude,
+    }, {
+      lat: latitude + delta,
+      lon: longitude + delta
+    }, {
+      lat: latitude - delta,
+      lon: longitude + delta
+    }, {
+      lat: latitude + delta,
+      lon: longitude - delta
+    }, {
+      lat: latitude - delta,
+      lon: longitude - delta
+    }];
+
+    const requests = coordinates.map(
+      ({ lat, lon }) => this.getCity(lat, lon)
+    );
+
+    return forkJoin(requests)
   }
 }
 

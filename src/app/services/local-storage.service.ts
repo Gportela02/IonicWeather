@@ -30,7 +30,7 @@ export class LocalStorageService {
     localStorage.setItem(cacheKey, JSON.stringify(filteredWeathers));
   }
 
-  getAllWeathers(cacheKey: string = "weathers"): OpenWeatherMapResponse[] {
+  getWeathersInCache(cacheKey: string = "weathers"): OpenWeatherMapResponse[] {
     const cachedWeathers = localStorage.getItem(cacheKey) || "[]";
     return JSON.parse(cachedWeathers) as OpenWeatherMapResponse[];
   }
