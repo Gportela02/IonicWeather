@@ -9,3 +9,14 @@ ion-button ion-icon {
   position: absolute;
   left: 0;
 }
+
+ion-toolbar div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#header-icon {
+  font-size: 2rem;
+  padding-inline: 20px;
+}
