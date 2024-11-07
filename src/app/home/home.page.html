@@ -7,6 +7,23 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-header>
+      <div>
+        <ion-input label="Latitude:" placeholder="Inserir..." [value]="latitude" (ionChange)="setLatitude($event.target.value)"></ion-input>
+        <ion-input label="Longitude:" placeholder="Inserir..." [value]="longitude" (ionChange)="setLongitude($event.target.value)"></ion-input>
+      </div>
+      <ion-button expand="block" (click)="setLocationWithGPS()">
+        <ion-icon name="location-outline"></ion-icon>
+        Usar localização
+      </ion-button>
+      <ion-button expand="block" (click)="searchWeathers()">
+        <ion-icon name="search-outline"></ion-icon>
+        Pesquisar
+      </ion-button>
+    </ion-card-header>
+  </ion-card>
+
   <div *ngFor="let weather of weathers">
     <app-weather-card [weather]="weather" />
   </div>
