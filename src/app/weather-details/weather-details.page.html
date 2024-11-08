@@ -14,9 +14,11 @@
 
 <ion-content [fullscreen]="true">
     <ion-card>
+      <ion-icon [name]="isFavorited ? 'star' : 'star-outline'" (click)="favoriteCard()"
+        [ngClass]="isFavorited ? 'star-full' : ''" id="fav-icon" />
       <ion-card-header>
           <ion-icon name="location-outline" color="primary"></ion-icon>
-          <ion-card-title>Detalhes sobre {{ weather.name }}</ion-card-title>
+          <ion-card-title>{{ weather.name }}</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>

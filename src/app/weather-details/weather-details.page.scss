@@ -2,6 +2,19 @@ ion-icon {
 	font-size: 2rem;
 }
 
+#fav-icon {
+	--distance-to-border: 10px;
+
+	margin-left: auto;
+	display: block;
+
+	transform: translate(calc(var(--distance-to-border) * -1), var(--distance-to-border));
+}
+
+.star-full {
+	color: #faf86b;
+}
+
 ion-header ion-icon {
 	font-size: 1.5rem;
 }
