@@ -2,6 +2,8 @@ import { Location } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OpenWeatherMapResponse } from '../services/open-weather-map.service';
+import { OpenMeteoService } from '../services/open-meteo.service';
+import { LocalStorageService } from '../services/local-storage.service';
 
 @Component({
   selector: 'app-weather-details',
@@ -9,12 +11,25 @@ import { OpenWeatherMapResponse } from '../services/open-weather-map.service';
   styleUrls: ['./weather-details.page.scss'],
 })
 export class WeatherDetailsPage implements OnInit {
-  constructor(private location: Location, private router: Router) { }
+  constructor(
+    private location: Location,
+    private router: Router,
+    private openMeteoService: OpenMeteoService,
+    private localStorage: LocalStorageService,
+  ) { }
+
   weather!: OpenWeatherMapResponse;
   weatherCode: number | null = null;
   weatherStatus: string | null = null;
   temperature!: number;
   humidity!: number;
+  isFavorited!: boolean;
+
+  hourlyData: Array<{
+    temperature: number
+    humidity: number
+    time: Date
+  }> = []
   
   ngOnInit(): void {
     const url = this.router.url;
@@ -25,6 +40,9 @@ export class WeatherDetailsPage implements OnInit {
     this.weatherStatus = this.capitalizeFirstLetter(this.weather.weather[0]?.description);
     this.temperature = this.weather.main.temp;
     this.humidity = this.weather.main.humidity;
+    this.isFavorited = this.weather.favorited
+
+    this.getWeatherPastTemperatures(this.weather.coord.lat, this.weather.coord.lon);
   }
 
   goBack() {
@@ -45,5 +63,40 @@ export class WeatherDetailsPage implements OnInit {
   private capitalizeFirstLetter(str: string | null) {
     if (!str) return null
     return str[0].toUpperCase() + str.slice(1)
+  }
+
+  getWeatherPastTemperatures(lat: number, lon: number) {
+    this.openMeteoService.getCity(lat, lon).subscribe((data) => {
+      const today = new Date();
+      const maxIndex = data.hourly.time.findIndex((weather) => {
+        const date = new Date(weather);
+        if (date.getDate() === today.getDate()) {
+          if (date.getHours() === (today.getHours() + 4) % 24) {
+            return true
+          }
+        }
+        return false
+      })
+
+      this.hourlyData = data.hourly.time
+        .filter((_, i) => i <= maxIndex)
+        .map((time) => new Date(time))
+        .sort((a, b) => a.getTime() - b.getTime())
+        .map((time, i) => ({
+          humidity: data.hourly.relative_humidity_2m[i],
+          temperature: data.hourly.temperature_2m[i],
+          time,
+        }));
+    });
+  }
+
+  favoriteCard() {
+    this.isFavorited = !this.isFavorited;
+    if (this.isFavorited) {
+      this.localStorage.saveWeather(this.weather);
+    }
+    if (!this.isFavorited) {
+      this.localStorage.removeWeather(this.weather);
+    }
   }
 }

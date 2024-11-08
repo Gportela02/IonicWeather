@@ -11,7 +11,7 @@ export class OpenMeteoService {
 
   constructor(private httpClient: HttpClient) { }
 
-  fetchCities(): Observable<OpenMeteoResponse> {
+  getCity(latitude: number, longitude: number): Observable<OpenMeteoResponse> {
     const hourlyParams = [
       "temperature_2m",
       "relative_humidity_2m",
@@ -19,9 +19,10 @@ export class OpenMeteoService {
     ];
 
     const params = new URLSearchParams({
-      latitude: "-8.047",
-      longitude: "-34.8770",
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
       hourly: hourlyParams.join(","),
+      "forecast_days": "1",
     });
 
     return this.httpClient.get<OpenMeteoResponse>(this.url + "/forecast?" + params.toString());
