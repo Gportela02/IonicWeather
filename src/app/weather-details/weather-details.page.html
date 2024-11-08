@@ -1,0 +1,46 @@
+<ng-template #unavailable>Indisp.</ng-template>
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <div class="header">
+      <div class="ion-activatable ripple-parent" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+        <ion-ripple-effect></ion-ripple-effect>
+      </div>
+      <ion-title>Detalhes</ion-title>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-card>
+      <ion-card-header>
+          <ion-icon name="location-outline" color="primary"></ion-icon>
+          <ion-card-title>Detalhes sobre {{ weather.name }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="info-badge">
+          <div [ngSwitch]="getWeatherIcon(weatherCode)" id="weather-status-icon">
+            <ion-icon name="sunny-outline" *ngSwitchCase="0"></ion-icon>
+            <ion-icon name="cloudy-outline" *ngSwitchCase="1"></ion-icon>
+            <ion-icon name="rainy-outline" *ngSwitchCase="2"></ion-icon>
+            <ion-icon name="thunderstorm-outline" *ngSwitchCase="3"></ion-icon>
+            <ion-icon name="snow-outline" *ngSwitchCase="4"></ion-icon>
+            <ion-icon name="help-outline" *ngSwitchDefault></ion-icon>
+          </div>
+          <p>{{ weatherStatus }}</p>
+        </div>
+
+        <div class="info-badge">
+          <ion-icon name="thermometer-outline"></ion-icon>
+          <p *ngIf="temperature !== null; else unavailable">Temperatura: {{ temperature }}°C</p>
+        </div>
+
+        <div class="info-badge">
+          <ion-icon name="water-outline"></ion-icon>
+          <p *ngIf="temperature !== null; else unavailable">Humidade: {{ humidity }}%</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+</ion-content>

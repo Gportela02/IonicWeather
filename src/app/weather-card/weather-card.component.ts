@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LocalStorageService } from '../services/local-storage.service';
 import { OpenWeatherMapResponse } from '../services/open-weather-map.service';
+import { Router } from '@angular/router';
 
 type WeatherCache = Array<{
   cityName: string | null
@@ -16,7 +17,7 @@ type WeatherCache = Array<{
   styleUrls: ['./weather-card.component.scss'],
 })
 export class WeatherCardComponent implements OnInit {
-  constructor(private localStorage: LocalStorageService) { }
+  constructor(private localStorage: LocalStorageService, private router: Router) { }
   cityName!: string | null;
   temperature!: number | null;
   weatherCode!: number | null;
@@ -26,7 +27,9 @@ export class WeatherCardComponent implements OnInit {
 
   @Input() weather!: OpenWeatherMapResponse;
 
-  favoriteCard() {
+  favoriteCard(event: MouseEvent | undefined) {
+    if (event) event.stopPropagation();
+
     this.isFavorited = !this.isFavorited;
     if (this.isFavorited) {
       this.localStorage.saveWeather(this.weather);
@@ -49,11 +52,15 @@ export class WeatherCardComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = this.weather.name;
-    this.temperature = this.weather.main.temp;
+    this.temperature = Math.round(this.weather.main.temp);
     this.weatherCode = this.weather.weather[0]?.id || null;
     this.humidity = this.weather.main.humidity;
     this.weatherStatus = this.capitalizeFirstLetter(this.weather.weather[0]?.description);
     this.isFavorited = !!this.weather.favorited;
+  }
+
+  goToDetails() {
+    this.router.navigate(["/weather-details", JSON.stringify(this.weather)])
   }
 
   private capitalizeFirstLetter(str: string | null) {

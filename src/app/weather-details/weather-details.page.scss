@@ -1,0 +1,61 @@
+ion-icon {
+	font-size: 2rem;
+}
+
+ion-header ion-icon {
+	font-size: 1.5rem;
+}
+
+.ripple-parent {
+	float: left;
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+
+  	position: relative;
+  	overflow: hidden;
+
+	user-select: none;
+
+	width: fit-content;
+	padding: 5px;
+	border-radius: 100%;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	padding-inline: 15px;
+}
+
+ion-card-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 15px;
+}
+
+ion-card-title {
+	margin: 0;
+}
+
+
+.info-badge {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.info-badge p {
+	font-size: 1.05rem;
+}
+
+.info-badge ion-icon {
+	font-size: 1.5rem;
+}
+
+ion-card-content {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}

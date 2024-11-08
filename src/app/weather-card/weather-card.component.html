@@ -1,4 +1,4 @@
-<ion-card>
+<ion-card (click)="goToDetails()">
 
   <ng-template #unavailable>Indisp.</ng-template>
 
@@ -22,7 +22,7 @@
         </ion-card-subtitle>
       </ion-card-header>
 
-      <ion-icon [name]="isFavorited ? 'star' : 'star-outline'" (click)="favoriteCard()"
+      <ion-icon [name]="isFavorited ? 'star' : 'star-outline'" (click)="favoriteCard($event)"
         [ngClass]="isFavorited ? 'star-full' : ''" />
     </header>
 
