@@ -25,6 +25,8 @@ export class WeatherDetailsPage implements OnInit {
   humidity!: number;
   isFavorited!: boolean;
 
+  selectedDate: Date = new Date();
+
   hourlyData: Array<{
     temperature: number
     humidity: number
@@ -42,7 +44,7 @@ export class WeatherDetailsPage implements OnInit {
     this.humidity = this.weather.main.humidity;
     this.isFavorited = this.weather.favorited
 
-    this.getWeatherPastTemperatures(this.weather.coord.lat, this.weather.coord.lon);
+    this.getHourlyWeatherData(this.weather.coord.lat, this.weather.coord.lon);
   }
 
   goBack() {
@@ -65,21 +67,20 @@ export class WeatherDetailsPage implements OnInit {
     return str[0].toUpperCase() + str.slice(1)
   }
 
-  getWeatherPastTemperatures(lat: number, lon: number) {
+  getHourlyWeatherData(lat: number, lon: number) {
     this.openMeteoService.getCity(lat, lon).subscribe((data) => {
       const today = new Date();
-      const maxIndex = data.hourly.time.findIndex((weather) => {
+      const minIndex = data.hourly.time.findIndex((weather) => {
         const date = new Date(weather);
         if (date.getDate() === today.getDate()) {
-          if (date.getHours() === (today.getHours() + 4) % 24) {
-            return true
-          }
+          return date.getHours() === today.getHours()
         }
-        return false
+
+        return false;
       })
 
       this.hourlyData = data.hourly.time
-        .filter((_, i) => i <= maxIndex)
+        .filter((_, i) => i >= minIndex)
         .map((time) => new Date(time))
         .sort((a, b) => a.getTime() - b.getTime())
         .map((time, i) => ({
