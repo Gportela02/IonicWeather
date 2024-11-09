@@ -30,6 +30,12 @@ export class WeatherDetailsPage implements OnInit {
   canSelectPrev: boolean = false;
   canSelectNext: boolean = true;
 
+  currentDateWeatherData: Array<{
+    temperature: number
+    humidity: number
+    time: string
+  }> = []
+
   DAYS_TO_SEARCH: number = 5;
   hourlyData: Array<{
     temperature: number
@@ -97,6 +103,10 @@ export class WeatherDetailsPage implements OnInit {
           temperature: data.hourly.temperature_2m[i],
           time,
         }));
+
+        console.log(this.hourlyData);
+
+      this.updateCurrentDateWeatherData();
     });
   }
 
@@ -116,13 +126,8 @@ export class WeatherDetailsPage implements OnInit {
     const monthNumber = date.getMonth() + 1;
     const yearNumber = date.getFullYear();
 
-    const addTrailingZero = (num: number): string => {
-      if (num < 10) return `0${num}`;
-      return num.toString();
-    }
-
-    const day = addTrailingZero(dayNumber);
-    const month = addTrailingZero(monthNumber);
+    const day = this.addTrailingZero(dayNumber);
+    const month = this.addTrailingZero(monthNumber);
     const year = yearNumber.toString().slice(2);
 
     this.selectedDateLabel = `${day}/${month}/${year}`;
@@ -143,9 +148,10 @@ export class WeatherDetailsPage implements OnInit {
     if (minDate.getTime() > previousDate.getTime()) return;
     
     this.canSelectNext = true;
-    this.canSelectPrev = minDate.getTime() < previousDate.getTime() - ONE_DAY_IN_MILLISECONDS;
+    this.canSelectPrev = minDate.getTime() <= previousDate.getTime() - ONE_DAY_IN_MILLISECONDS;
     this.selectedDate = previousDate.toISOString();
     this.updateSelectedDateLabel();
+    this.updateCurrentDateWeatherData();
   }
 
   increaseSelectedDate() {
@@ -164,8 +170,31 @@ export class WeatherDetailsPage implements OnInit {
     if (nextDate.getTime() > maxDate.getTime()) return;
     
     this.canSelectPrev = true;
-    this.canSelectNext = maxDate.getTime() > nextDate.getTime() + ONE_DAY_IN_MILLISECONDS;
+    this.canSelectNext = maxDate.getTime() >= nextDate.getTime() + ONE_DAY_IN_MILLISECONDS;
     this.selectedDate = nextDate.toISOString();
     this.updateSelectedDateLabel();
+    this.updateCurrentDateWeatherData()
+  }
+
+  updateCurrentDateWeatherData() {
+    this.currentDateWeatherData = this.hourlyData.filter((hourlyData) => {
+      const date = new Date(this.selectedDate);
+      return date.getDate() === hourlyData.time.getDate();
+    }).map((hourlyData) => {
+      const hour = hourlyData.time.getHours();
+      const minutes = hourlyData.time.getMinutes();
+      const time = `${this.addTrailingZero(hour)}:${this.addTrailingZero(minutes)}`;
+
+      return {
+        humidity: hourlyData.humidity,
+        temperature: hourlyData.temperature,
+        time,
+      };
+    });
+  }
+
+  private addTrailingZero(num: number): string {
+    if (num < 10) return `0${num}`;
+    return num.toString();
   }
 }

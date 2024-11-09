@@ -22,7 +22,7 @@ export class OpenMeteoService {
       latitude: latitude.toString(),
       longitude: longitude.toString(),
       hourly: hourlyParams.join(","),
-      "forecast_days": days.toString(),
+      "forecast_days": (days + 1).toString(),
     });
 
     return this.httpClient.get<OpenMeteoResponse>(this.url + "/forecast?" + params.toString());

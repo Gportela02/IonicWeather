@@ -52,6 +52,10 @@ ion-card-title {
 	margin: 0;
 }
 
+ion-card-subtitle {
+	font-size: 1.05rem;
+	text-align: center;
+}
 
 .info-badge {
 	display: flex;
@@ -98,4 +102,21 @@ ion-card-content {
 
 .icon-disabled {
 	opacity: 50%;
+}
+
+.hourly-data {
+	display: flex;
+	flex-direction: row	;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.hourly-data div {
+	display: flex;
+	align-items: center;
+}
+
+.hourly-data h1 {
+	font-size: 1.25rem;
+	margin-block: auto;
 }

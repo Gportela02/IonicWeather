@@ -49,7 +49,7 @@
     <ion-card class="history-card">
       <ion-card-header>
         <div id="history-card-header">
-          <ion-icon name="thermometer-outline"></ion-icon>
+          <ion-icon name="thermometer-outline" color="primary"></ion-icon>
           <ion-card-title>Previsão</ion-card-title>
         </div>
         <div id="history-card-date-selector">
@@ -66,5 +66,22 @@
           </div>
         </div>
       </ion-card-header>
+
+      <ion-card-content *ngFor="let data of currentDateWeatherData">
+        <div class="hourly-data">
+          <h1>{{ data.time }}</h1>
+          <div> 
+            <div class="info-badge">
+              <ion-icon name="thermometer-outline"></ion-icon>
+              <p *ngIf="temperature !== null; else unavailable">{{ data.temperature }}°C</p>
+            </div>
+            <p>・</p>
+            <div class="info-badge">
+              <ion-icon name="water-outline"></ion-icon>
+              <p *ngIf="temperature !== null; else unavailable">{{ data.humidity }}%</p>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
     </ion-card>
 </ion-content>
