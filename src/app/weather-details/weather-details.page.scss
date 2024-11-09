@@ -72,3 +72,30 @@ ion-card-content {
 	flex-direction: column;
 	gap: 10px;
 }
+
+#history-card-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 15px;
+}
+
+.history-card ion-card-header {
+	flex-direction: column;
+}
+
+.history-card ion-icon {
+	font-size: 1.25rem;
+}
+
+#history-card-date-selector {
+	width: 100%;
+	
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.icon-disabled {
+	opacity: 50%;
+}

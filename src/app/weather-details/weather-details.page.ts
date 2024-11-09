@@ -25,8 +25,12 @@ export class WeatherDetailsPage implements OnInit {
   humidity!: number;
   isFavorited!: boolean;
 
-  selectedDate: Date = new Date();
+  selectedDate!: string;
+  selectedDateLabel!: string;
+  canSelectPrev: boolean = false;
+  canSelectNext: boolean = true;
 
+  DAYS_TO_SEARCH: number = 5;
   hourlyData: Array<{
     temperature: number
     humidity: number
@@ -36,19 +40,24 @@ export class WeatherDetailsPage implements OnInit {
   ngOnInit(): void {
     const url = this.router.url;
     const decodedUrl = decodeURI(url.split("/")[2]);
-
     this.weather = JSON.parse(decodedUrl);
+
     this.weatherCode = this.weather.weather[0]?.id;
     this.weatherStatus = this.capitalizeFirstLetter(this.weather.weather[0]?.description);
     this.temperature = this.weather.main.temp;
     this.humidity = this.weather.main.humidity;
-    this.isFavorited = this.weather.favorited
+    this.isFavorited = this.weather.favorited;
 
     this.getHourlyWeatherData(this.weather.coord.lat, this.weather.coord.lon);
+    
+    const today = new Date();
+    today.setMinutes(0, 0, 0);
+    this.selectedDate = today.toISOString();
+    this.updateSelectedDateLabel();
   }
 
   goBack() {
-    this.location.back()
+    this.location.back();
   }
 
   getWeatherIcon(weatherCode: number | null): number | null {
@@ -62,13 +71,13 @@ export class WeatherDetailsPage implements OnInit {
     return null;
   }
 
-  private capitalizeFirstLetter(str: string | null) {
+  private capitalizeFirstLetter(str: string | null): string | null {
     if (!str) return null
     return str[0].toUpperCase() + str.slice(1)
   }
 
   getHourlyWeatherData(lat: number, lon: number) {
-    this.openMeteoService.getCity(lat, lon).subscribe((data) => {
+    this.openMeteoService.getCity(lat, lon, this.DAYS_TO_SEARCH).subscribe((data) => {
       const today = new Date();
       const minIndex = data.hourly.time.findIndex((weather) => {
         const date = new Date(weather);
@@ -99,5 +108,64 @@ export class WeatherDetailsPage implements OnInit {
     if (!this.isFavorited) {
       this.localStorage.removeWeather(this.weather);
     }
+  }
+
+  updateSelectedDateLabel() {
+    const date = new Date(this.selectedDate);
+    const dayNumber = date.getDate();
+    const monthNumber = date.getMonth() + 1;
+    const yearNumber = date.getFullYear();
+
+    const addTrailingZero = (num: number): string => {
+      if (num < 10) return `0${num}`;
+      return num.toString();
+    }
+
+    const day = addTrailingZero(dayNumber);
+    const month = addTrailingZero(monthNumber);
+    const year = yearNumber.toString().slice(2);
+
+    this.selectedDateLabel = `${day}/${month}/${year}`;
+  }
+
+  decreaseSelectedDate() {
+    const ONE_DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+    const currentDateInMilliseconds = new Date(this.selectedDate).getTime();
+    
+    const previousDateInMilliseconds = currentDateInMilliseconds - ONE_DAY_IN_MILLISECONDS;
+    
+    const previousDate = new Date(previousDateInMilliseconds);
+    const minDate = new Date();
+
+    previousDate.setHours(0, 0, 0, 0);
+    minDate.setHours(0, 0, 0, 0);
+
+    if (minDate.getTime() > previousDate.getTime()) return;
+    
+    this.canSelectNext = true;
+    this.canSelectPrev = minDate.getTime() < previousDate.getTime() - ONE_DAY_IN_MILLISECONDS;
+    this.selectedDate = previousDate.toISOString();
+    this.updateSelectedDateLabel();
+  }
+
+  increaseSelectedDate() {
+    const ONE_DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+    const currentDateInMilliseconds = new Date(this.selectedDate).getTime();
+    const nextDateInMilliseconds = currentDateInMilliseconds + ONE_DAY_IN_MILLISECONDS;
+    
+    const nextDate = new Date(nextDateInMilliseconds);
+    const today = new Date();
+    
+    nextDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    
+    const todayInMilliseconds = today.getTime();
+    const maxDate = new Date(todayInMilliseconds + (ONE_DAY_IN_MILLISECONDS * this.DAYS_TO_SEARCH));
+    if (nextDate.getTime() > maxDate.getTime()) return;
+    
+    this.canSelectPrev = true;
+    this.canSelectNext = maxDate.getTime() > nextDate.getTime() + ONE_DAY_IN_MILLISECONDS;
+    this.selectedDate = nextDate.toISOString();
+    this.updateSelectedDateLabel();
   }
 }

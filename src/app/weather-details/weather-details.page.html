@@ -45,4 +45,26 @@
         </div>
       </ion-card-content>
     </ion-card>
+
+    <ion-card class="history-card">
+      <ion-card-header>
+        <div id="history-card-header">
+          <ion-icon name="thermometer-outline"></ion-icon>
+          <ion-card-title>Previsão</ion-card-title>
+        </div>
+        <div id="history-card-date-selector">
+          <div class="ion-activatable ripple-parent" (click)="decreaseSelectedDate()">
+            <ion-icon name="caret-back" [ngClass]="canSelectPrev ? '' : 'icon-disabled'"></ion-icon>
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+          
+          <ion-card-subtitle>{{ selectedDateLabel }}</ion-card-subtitle>
+          
+          <div class="ion-activatable ripple-parent" (click)="increaseSelectedDate()">
+            <ion-icon name="caret-forward" [ngClass]="canSelectNext ? '' : 'icon-disabled'"></ion-icon>
+            <ion-ripple-effect></ion-ripple-effect>
+          </div>
+        </div>
+      </ion-card-header>
+    </ion-card>
 </ion-content>
