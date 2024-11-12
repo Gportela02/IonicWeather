@@ -7,7 +7,7 @@ import { forkJoin, Observable } from 'rxjs';
 })
 export class OpenWeatherMapService {
 
-  private url = "http://api.openweathermap.org/data/2.5";
+  private url = "https://api.openweathermap.org/data/2.5";
   private API_KEY = "f2ed83e4127fab215be16253d167f896";
 
   constructor(private httpClient: HttpClient) { }
